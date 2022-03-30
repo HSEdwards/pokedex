@@ -9,3 +9,6 @@
 
 Hello user!
 This is my pokedex. You need to install axios to use. But other than that, it exists in all its current glory.
+
+All it does now is produce basic information about a pokemon that you search for by name.
+Names must be spelled correctly.
