@@ -1,97 +1,114 @@
 import * as React from "react"
 import Layout from '../components/layout'
-import axios from "axios"
+import Axios from "axios"
+
+//the formatting
+// styles
+
+
+
 
 
 // the card baby!
 const IndexPage = () => {
   //set use states
-  const [pokemon, setPokemon] = React.useState("pikachu");
-  const [pokemonData, setPokemonData] = React.useState([]);
-  const [pokemonType, setPokemonType] = React.useState("")
+  const [pokemonChosen, setPokemonChosen] = React.useState(false);
+  const [pokemonName, setPokemonName] = React.useState("pikachu");
+  const [pokemon, setPokemon] = React.useState({
+    name: "", 
+    species: "", 
+    image: "",
+    hp: "",
+    attack: "",
+    defense: "",
+    type: ""
+  });
 
   //connect to api
-  const getPokemon = async () => {
-    const toArray = [];
-    try{
-      const url = 'https://pokeapi.co/api/v2/pokemon/' + pokemon;
-      const res = await axios.get(url);
-      console.log(res);
-
-      toArray.push(res.data);
-      setPokemonType(res.data.types[0].type.name);
-      setPokemonData(toArray);
+  const searchPokemon = () => {
+    try{      
+      const url = 'https://pokeapi.co/api/v2/pokemon/' + pokemonName;
+      Axios.get('https://pokeapi.co/api/v2/pokemon/' + pokemonName).then(
+        (response) => {
+          setPokemon({
+            name: pokemonName, 
+            species: response.data.species.name, 
+            image: response.data.sprites.front_default,
+            hp: response.data.stats[0].base_stat,
+            attack: response.data.stats[1].base_stat,
+            defense: response.data.stats[2].base_stat,
+            type: response.data.types[0].type.name,
+          })
+          setPokemonChosen(true);
+        }
+      );
+      
 
     }catch (e){
       console.log(e)
     }
   }
-  React.useEffect(() => {
-    getPokemon();
-  }, [])
 
-  //handle form submission
-  const handleChange = (e) => {
-    setPokemon(e.target.value.toLowerCase());
-  }
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    getPokemon();
-  }
-
-
-  return ( 
+  
+  //the display
+  return (   
     
+    <Layout pageTitle="Pokedex">      
+      <div>
 
-    
-    <div className = "Pokedex">
-      <form onSubmit={handleSubmit}>
-        <label>
-          <input type="text" 
-          onChange={handleChange} 
-          placeholder="Enter Pokemon Name"/>
-        </label>
-      </form>
-
-      {pokemonData.map((data) => {
-        return(
-          <div className="container">
-            <img />
-            <div className="table">
-              <div className="tableBody"></div>
+        {/* search box */}
+        
+          <label>
+            <input type="text" 
+            onChange={(event) => {
+              setPokemonName(event.target.value);
+            }} 
+            placeholder="Enter Pokemon Name"/>
+          </label>
+          <button onClick = {searchPokemon}>Search</button>
+        
+        <div>
+          <img src = {pokemon.image}/> 
+        </div>
+        <div>  
+           
+          <table>
+            <tr>
+              <th>Stat</th>
+              <th>Data</th>
+            </tr>
+            <tr>
+              <td>Species</td>
+              <td>{pokemon.species}</td>
+            </tr>
+            <tr>
+              <td>Type</td>
+              <td>{pokemon.type}</td>
+            </tr>
+            <tr>
+              <td>HP</td>
+              <td>{pokemon.hp}</td>
               
-              <div className="tableRow">
-                <div className="tableCell">Type</div>
-                <div className="tableCell">{pokemonType}</div>
-              </div>
+            </tr>
+            <tr>
+              <td>Attack</td>
+              <td>{pokemon.attack}</td>
+            </tr>
+            <tr>
+              <td>Defense</td>
+              <td>{pokemon.defense}</td>
+            </tr>
+          </table>      
+          {!pokemonChosen ? (<p>Search a Pokemon</p>) : (<p></p>)}
+        </div>
 
-              <div className="tableRow">
-                <div className="tableCell">Height</div>
-                <div className="tableCell">{" "}{Math.round(data.height*3.9)}"</div>
-              </div>
-
-              <div className="tableRow">
-                <div className="tableCell">Weight</div>
-                <div className="tableCell">{" "}{Math.round(data.weight/4.3)} lbs"</div>
-              </div>
-
-              <div className="tableRow">
-                <div className="tableCell">Type</div>
-                <div className="tableCell">{pokemonType}</div>
-              </div>
-
-            </div>
-
-          </div>
-        )
-      })}
-    </div>
-   
+       
+      </div>   
+    </Layout>
+      
+    
+    
 
   )
 }
-
-
-
 export default IndexPage

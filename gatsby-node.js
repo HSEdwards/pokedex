@@ -16,6 +16,9 @@ exports.createPages = async ({ graphql, actions }) => {
       }
     }
   `)
+
+  /*
+
   const postTemplate = path.resolve(`./src/templates/post.js`)
   result.data.allWordpressPost.edges.forEach(edge => {
     createPage({
@@ -26,4 +29,5 @@ exports.createPages = async ({ graphql, actions }) => {
       },
     })
   })
+  */
 }
