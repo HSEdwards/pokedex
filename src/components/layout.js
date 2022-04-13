@@ -4,6 +4,7 @@ import { Link, useStaticQuery, graphql } from 'gatsby'
 import {
   titleSection,
   card,
+  button,
 } from './layout.module.css'
 
 

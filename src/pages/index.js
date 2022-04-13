@@ -2,15 +2,15 @@ import * as React from "react"
 import Layout from '../components/layout'
 import Axios from "axios"
 
-//the formatting
-// styles
-
-
-
+import { useDispatch } from 'react-redux'
+import { pieDataUpdateAction } from '../redux/pieData/pieActions'
+import { usePieData } from '../redux/pieData/usePieData'
+import Pie from '../components/pie'
 
 
 // the card baby!
 const IndexPage = () => {
+  
   //set use states
   const [pokemonChosen, setPokemonChosen] = React.useState(false);
   const [pokemonName, setPokemonName] = React.useState("pikachu");
@@ -26,9 +26,8 @@ const IndexPage = () => {
 
   //connect to api
   const searchPokemon = () => {
-    try{      
-      const url = 'https://pokeapi.co/api/v2/pokemon/' + pokemonName;
-      Axios.get('https://pokeapi.co/api/v2/pokemon/' + pokemonName).then(
+    try{            
+      Axios.get('https://pokeapi.co/api/v2/pokemon/' + pokemonName.toLowerCase()).then(
         (response) => {
           setPokemon({
             name: pokemonName, 
@@ -45,31 +44,38 @@ const IndexPage = () => {
       
 
     }catch (e){
+
       console.log(e)
     }
   }
 
+  //pull data together for graph
+  const pokemonData = [pokemon.hp, pokemon.defense, pokemon.attack];
+
+  //pie
+  const dispatch = useDispatch()
+  const pieDataValues = usePieData()
+  const pieDataUpdateActionFunction = pieDataUpdateAction
   
   //the display
   return (   
     
-    <Layout pageTitle="Pokedex">      
+    <Layout pageTitle="Pokedex"> 
+      
       <div>
-
-        {/* search box */}
-        
-          <label>
-            <input type="text" 
-            onChange={(event) => {
-              setPokemonName(event.target.value);
-            }} 
-            placeholder="Enter Pokemon Name"/>
-          </label>
-          <button onClick = {searchPokemon}>Search</button>
+                   
+          <input type="text" 
+          onChange={(event) => {
+            setPokemonName(event.target.value);
+          }} 
+          placeholder="Enter Pokemon Name"/>
+           <br></br> 
+          <button onClick = {searchPokemon} >Search</button>
         
         <div>
           <img src = {pokemon.image}/> 
         </div>
+
         <div>  
            
           <table>
@@ -98,17 +104,54 @@ const IndexPage = () => {
               <td>Defense</td>
               <td>{pokemon.defense}</td>
             </tr>
-          </table>      
-          {!pokemonChosen ? (<p>Search a Pokemon</p>) : (<p></p>)}
+          </table>   
+          
+          {!pokemonChosen ? (<p>Search a Pokemon!</p>) : (<p></p>)}
         </div>
 
+        <div>
+          <p>This is a graph of the stats to show off the fact I can make a graph! Dandy, huh?</p>
+          <button onClick={() => dispatch(pieDataUpdateActionFunction())}>
+            Update Data
+          </button>
+          <Pie
+            data={pieDataValues}
+            width={400}
+            height={400}
+            innerRadius={100}
+            outerRadius={200}
+            cornerRadius={15}
+          />
+        </div>
        
       </div>   
     </Layout>
-      
-    
-    
-
   )
 }
+
 export default IndexPage
+
+
+/*
+export default () => {
+  const dispatch = useDispatch()
+  const pieDataValues = usePieData()
+  const pieDataUpdateActionFunction = pieDataUpdateAction
+  return (
+    <>
+      <button onClick={() => dispatch(pieDataUpdateActionFunction())}>
+        Update Data
+      </button>
+      <Pie
+        data={pieDataValues}
+        width={400}
+        height={400}
+        innerRadius={100}
+        outerRadius={200}
+        cornerRadius={15}
+      />
+    </>
+  )
+}
+*/
+
