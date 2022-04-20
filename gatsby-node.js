@@ -1,21 +1,20 @@
 //created file 
 //added from site
+
 const path = require(`path`)
 const { slash } = require(`gatsby-core-utils`)
 exports.createPages = async ({ graphql, actions }) => {
   const { createPage } = actions
   const result = await graphql(`
-    query {
-      allWordpressPost {
-        edges {
-          node {
-            id
-            slug
-          }
-        }
+  query{
+    site {
+      siteMetadata {
+        title
       }
     }
+  }
   `)
+  
 
   /*
 

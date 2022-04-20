@@ -7,6 +7,8 @@ import { pieDataUpdateAction } from '../redux/pieData/pieActions'
 import { usePieData } from '../redux/pieData/usePieData'
 import Pie from '../components/pie'
 
+import * as d3 from 'd3';
+
 
 // the card baby!
 const IndexPage = () => {
@@ -16,6 +18,8 @@ const IndexPage = () => {
   const [pokemonName, setPokemonName] = React.useState("pikachu");
   const [pokemon, setPokemon] = React.useState({
     name: "", 
+    //slightly -- very -- faulty
+    id: 0,
     species: "", 
     image: "",
     hp: "",
@@ -23,6 +27,11 @@ const IndexPage = () => {
     defense: "",
     type: ""
   });
+  const [pokemonData, setPokemonData] = React.useState(
+    [{label: "HP", value: 13},
+    {label: "Defense", value: 14},
+    {label: "Attack", value: 15}]
+    );
 
   //connect to api
   const searchPokemon = () => {
@@ -31,17 +40,21 @@ const IndexPage = () => {
         (response) => {
           setPokemon({
             name: pokemonName, 
+            id: response.data.order,
             species: response.data.species.name, 
             image: response.data.sprites.front_default,
             hp: response.data.stats[0].base_stat,
             attack: response.data.stats[1].base_stat,
             defense: response.data.stats[2].base_stat,
             type: response.data.types[0].type.name,
-          })
+          })    
+          //var h = parseInt(pokemon.hp);
+          setPokemonData([{label: "Hp", value: response.data.stats[0].base_stat},
+          {label: "Defense", value:  response.data.stats[2].base_stat},
+          {label: "Attack", value: response.data.stats[1].base_stat}]) 
           setPokemonChosen(true);
         }
       );
-      
 
     }catch (e){
 
@@ -49,27 +62,86 @@ const IndexPage = () => {
     }
   }
 
-  //pull data together for graph
-  const pokemonData = [pokemon.hp, pokemon.defense, pokemon.attack];
+  const incrementPokemon = () => {    
+    try{            
+      Axios.get('https://pokeapi.co/api/v2/pokemon/' + ((pokemon.id) + 1)).then(
+        (response) => {
+          setPokemon({
+            name: response.data.species.name, 
+            id: response.data.order,
+            species: response.data.species.name, 
+            image: response.data.sprites.front_default,
+            hp: response.data.stats[0].base_stat,
+            attack: response.data.stats[1].base_stat,
+            defense: response.data.stats[2].base_stat,
+            type: response.data.types[0].type.name,
+          })          
+          setPokemonName(response.data.species.name)
+          setPokemonData([{label: "Hp", value: response.data.stats[0].base_stat},
+          {label: "Defense", value:  response.data.stats[2].base_stat},
+          {label: "Attack", value: response.data.stats[1].base_stat}]) 
+          setPokemonChosen(true);
+        }
+      );
+      
+    }catch (e){
+
+      console.log(e)
+    }
+  }
+
+  const decrementPokemon = () => {  
+    let x = (pokemon.id) - 1;  
+    try{            
+      Axios.get('https://pokeapi.co/api/v2/pokemon/' + x).then(
+        (response) => {
+          setPokemon({
+            name: pokemonName, 
+            id: response.data.order,
+            species: response.data.species.name, 
+            image: response.data.sprites.front_default,
+            hp: response.data.stats[0].base_stat,
+            attack: response.data.stats[1].base_stat,
+            defense: response.data.stats[2].base_stat,
+            type: response.data.types[0].type.name,
+          })
+          setPokemonName(response.data.species.name)
+          setPokemonData([{label: "Hp", value: response.data.stats[0].base_stat},
+          {label: "Defense", value:  response.data.stats[2].base_stat},
+          {label: "Attack", value: response.data.stats[1].base_stat}])  
+          setPokemonChosen(true);
+        }
+      );
+      
+    }catch (e){
+
+      console.log(e)
+    }
+  }
+
+
 
   //pie
   const dispatch = useDispatch()
   const pieDataValues = usePieData()
   const pieDataUpdateActionFunction = pieDataUpdateAction
+
+  //set pie
   
+
   //the display
-  return (   
-    
+  return (      
     <Layout pageTitle="Pokedex"> 
       
       <div>
-                   
+          <button onClick = {decrementPokemon}>   {'<'}   </button>        
           <input type="text" 
           onChange={(event) => {
             setPokemonName(event.target.value);
           }} 
           placeholder="Enter Pokemon Name"/>
-           <br></br> 
+          <button onClick = {incrementPokemon}>   {'>'}   </button>
+          <br></br> 
           <button onClick = {searchPokemon} >Search</button>
         
         <div>
@@ -82,11 +154,11 @@ const IndexPage = () => {
             <tr>
               <th>Stat</th>
               <th>Data</th>
-            </tr>
+            </tr>            
             <tr>
               <td>Species</td>
               <td>{pokemon.species}</td>
-            </tr>
+            </tr>           
             <tr>
               <td>Type</td>
               <td>{pokemon.type}</td>
@@ -110,12 +182,11 @@ const IndexPage = () => {
         </div>
 
         <div>
-          <p>This is a graph of the stats to show off the fact I can make a graph! Dandy, huh?</p>
-          <button onClick={() => dispatch(pieDataUpdateActionFunction())}>
-            Update Data
-          </button>
+          <p>This is a graph to show off the fact I can make a graph! Dandy, huh?
+            (soon it will display the pokemon stats)
+          </p>          
           <Pie
-            data={pieDataValues}
+            data={pokemonData}
             width={400}
             height={400}
             innerRadius={100}
