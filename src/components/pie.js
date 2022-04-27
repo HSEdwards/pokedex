@@ -29,7 +29,7 @@ const Arc = ({ index, pieData, colors, innerRadius, outerRadius }) => {
         textAnchor="middle"
         alignmentBaseline="middle"
         fill="white"
-        fontSize="10"
+        fontSize="15"
       >
         {pieData.data.label}
       </text>
