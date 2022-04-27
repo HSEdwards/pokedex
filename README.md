@@ -4,13 +4,22 @@
   </a>
 </p>
 <h1 align="center">
-  Gatsby minimal starter
+  Made with Gatsby!
 </h1>
 
-Hello user!
-This is my pokedex. You need to install axios to use. But other than that, it exists in all its current glory.
-
-In theory you are able to view a working version of this website at the link https://hsedwards.github.io/pokedex/ 
+<h2>Hello user!</h2>
+This is my pokedex. 
+You should be able to view a version of this site on https://hsedwards.github.io/pokedex/ 
 
 All it does now is produce basic information about a pokemon that you search for by name.
 Names must be spelled correctly.
+
+Here is what else you will need:
+
+<h2>Gatsby-</h2>
+use: npm run develop
+to start the server and then go to http://localhost:8000 to see edits in real time.
+
+<h2>D3-</h2>
+use: npm i d3
+to import the d3 library
