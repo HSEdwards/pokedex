@@ -10,5 +10,7 @@
 Hello user!
 This is my pokedex. You need to install axios to use. But other than that, it exists in all its current glory.
 
+In theory you are able to view a working version of this website at the link https://hsedwards.github.io/pokedex/ 
+
 All it does now is produce basic information about a pokemon that you search for by name.
 Names must be spelled correctly.
